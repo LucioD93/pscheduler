@@ -32,8 +32,9 @@
 *.dSYM/
 *.su
 
-# Entradas y salidas
+# Entradas, salidas y enunciado
 *.txt
+*.pdf
 
 # Archivos SWAP
 *.swp
