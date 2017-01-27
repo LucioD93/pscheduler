@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
         break;
         case 2:
         printf("Planificar proximo proceso\n");
-        //ProxProceso(s);
+        ImprimeProceso(ProxProceso(s));
         break;
         case 3:
           printf("Estoy listo estoy listo\n");
@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
         exit(0);
         break;
         default:
-        printf("Intente de nuevo\n");
+        printf("ERROR: Intente de nuevo\n");
         break;
       }
   }

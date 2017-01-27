@@ -72,7 +72,29 @@ void TodosProcesosListos( EstrucSched *s) {
 }
 
 // Funcion para planificar el proximo proceso
+Proceso *ProxProceso(EstrucSched *s) {
+  int i = 0;
+  while( i < 6 && ColaVacia(s -> colas[i])) {
+    i++;
+  }
+  if (i == 6) {
+    return NULL;
+  }
+  printf("Cola: %d\n",i);
+  // Si llego aqui encontro una cola no vacia
+  Proceso *p = s -> colas[i] -> primero;
+  printf("Proceso: ");
+  ImprimeProceso(p);
+  CambiarEstado(s, p, 'E');
+  if (p -> siguiente) {
+    s -> colas[i] -> primero = p -> siguiente;
+    p -> siguiente = NULL;
+    s -> colas[i] -> ultimo -> siguiente = p;
+    s -> colas[i] -> ultimo = p;
+  }
+  return p;
 
+}
 
 //Funcion para eliminar el proceso en ejecucion
 void ElimProcesoE(EstrucSched *s) {
