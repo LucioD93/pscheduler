@@ -56,10 +56,20 @@ Proceso *nuevoProceso(long pid, char estado, float tiempo, char comando[32]) {
 
 // Funcion para cambiar el estado de un proceso
 void CambiarEstado(EstrucSched *s, Proceso *p, char newestado) {
-  
+  p -> Estado = newestado;
 }
 
 // Funcion para poner todos los procesos en estado listo
+void TodosProcesosListos( EstrucSched *s) {
+  Proceso *actual;
+  for (int i = 0; i < 6; i++) {
+    actual = s -> colas[i] -> primero;
+    while (actual) {
+      CambiarEstado(s, actual, 'L');
+      actual = actual -> siguiente;
+    }
+  }
+}
 
 // Funcion para planificar el proximo proceso
 

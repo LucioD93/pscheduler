@@ -39,6 +39,7 @@ void InsertarProceso(EstrucSched*, Proceso*, short);
 EstrucSched *Construye(char*);
 Proceso *BuscarProceso(EstrucSched*, long);
 Proceso *ProxProceso(EstrucSched*);
+void TodosProcesosListos(EstrucSched*);
 void LeerProceso(EstrucSched*);
 void Guardar(EstrucSched*, char*);
 void Imprime(EstrucSched*);
