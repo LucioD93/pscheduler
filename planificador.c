@@ -152,6 +152,7 @@ Proceso *EliminarEnEjecucion(Proceso *p) {
   }
   if (p -> Estado == 'E') {
     Proceso *temp = p -> siguiente;
+    printf("Elimino: %ld", p->PID);
     free(p);
     return temp;
   }
@@ -159,13 +160,25 @@ Proceso *EliminarEnEjecucion(Proceso *p) {
   return p;
 }
 
-// void RecuperarUltimo
+// Funcion para recuperar el apuntador al ultimo elemento de una cola
+void RecuperarUltimo(cola *c) {
+  if (!ColaVacia(c)) {
+    Proceso *p = c -> primero;
+    while (p) {
+      c -> ultimo = p;
+      p = p -> siguiente;
+    }
+    printf("Quedo: %ld\n", c -> ultimo -> PID);
+  }
+}
 
 // Funcion para eliminar el proceso en ejecucion
 void ElimProcesoE(EstrucSched *s) {
-  Proceso *p, *previo;
   for (int i = 0; i < 6; i++) {
     EliminarEnEjecucion(s -> colas[i] -> primero);
+    RecuperarUltimo(s -> colas[i]);
+    printf("Ultimo(%d): ", i);
+    ImprimeProceso(s -> colas[i] -> ultimo);
   }
 }
 
@@ -201,7 +214,7 @@ void Guardar(EstrucSched *s, char *archivo) {
     exit(1);
   }
   for(int i = 0; i< 6; i++) {
-    fprintf(f, "Q%d\n", i);
+    fprintf(f, "Prioridad: %d\n", i);
     Proceso *actual = s-> colas[i] -> primero;
     if (actual) {
       Proceso *siguiente = actual -> siguiente;
@@ -224,7 +237,7 @@ void Guardar(EstrucSched *s, char *archivo) {
 // Funcion para mostrar por consola un planificador de procesos
 void Imprime(EstrucSched *s) {
   for (int i = 0; i < 6; i++) {
-    printf("Q%d\n", i);
+    printf("Prioridad: %d\n", i);
     ImprimeCola(s -> colas[i]);
     printf("---------------\n");
   }
@@ -241,5 +254,9 @@ void ImprimeCola(cola *c) {
 
 // Funcion para imprimir un proceso
 void ImprimeProceso(Proceso *p) {
+  if (!p) {
+    printf("Proceso nulo");
+    return;
+  }
   printf("PID: %ld, Estado: %c, Tiempo: %f, Comando: %s\n", p -> PID, p -> Estado, p -> Tiempo, p -> Comando);
 }

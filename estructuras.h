@@ -38,6 +38,7 @@ Proceso *nuevoProceso(long, char, float, char*);
 EstrucSched *Construye(char*);
 Proceso *BuscarProceso(EstrucSched*, long);
 Proceso *ProxProceso(EstrucSched*);
+void ElimProceso(EstrucSched*, long, short);
 void ElimProcesoE(EstrucSched*);
 void InsertarProceso(EstrucSched*, Proceso*, short);
 void TodosProcesosListos(EstrucSched*);
