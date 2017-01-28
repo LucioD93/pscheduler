@@ -13,6 +13,7 @@ int main(int argc, char *argv[]) {
     printf("1) Imprimir los procesos en el planificador\n");
     printf("2) Planificar proximo proceso\n");
     printf("3) Cambiar todos los procesos a estado listo\n");
+    printf("4) Eliminar proceso en ejecucion\n");
     printf("0) Guardar y salir\n");
     printf("Solo se toma el primer caracter: >");
     scanf("%d", &opcion);
@@ -21,12 +22,15 @@ int main(int argc, char *argv[]) {
         Imprime(s);
         break;
         case 2:
-        printf("Planificar proximo proceso\n");
+        TodosProcesosListos(s);
+        printf("Planificar proximo proceso: ");
         ImprimeProceso(ProxProceso(s));
         break;
         case 3:
-          printf("Estoy listo estoy listo\n");
           TodosProcesosListos(s);
+        break;
+        case 4:
+          ElimProcesoE(s);
         break;
         case 0:
         printf("Salgo\n");

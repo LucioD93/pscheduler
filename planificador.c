@@ -80,11 +80,8 @@ Proceso *ProxProceso(EstrucSched *s) {
   if (i == 6) {
     return NULL;
   }
-  printf("Cola: %d\n",i);
   // Si llego aqui encontro una cola no vacia
   Proceso *p = s -> colas[i] -> primero;
-  printf("Proceso: ");
-  ImprimeProceso(p);
   CambiarEstado(s, p, 'E');
   if (p -> siguiente) {
     s -> colas[i] -> primero = p -> siguiente;
@@ -94,21 +91,6 @@ Proceso *ProxProceso(EstrucSched *s) {
   }
   return p;
 
-}
-
-//Funcion para eliminar el proceso en ejecucion
-void ElimProcesoE(EstrucSched *s) {
-  Proceso *actual;
-  Proceso *previo;
-  for (int i = 0; i < 6; i++) {
-    actual = s -> colas[i] -> primero;
-    if (actual -> Estado == 'E') {
-      s -> colas[i] -> primero = actual -> siguiente;
-      free(actual);
-    } else {
-
-    }
-  }
 }
 
 // Funcion para crear un nuevo planificador leyendo un archivo
@@ -163,6 +145,30 @@ Proceso *BuscarProceso(EstrucSched *s, long pidBuscado) {
   return NULL;
 }
 
+// Funcion para eliminar un proceso en ejecucion de una colas
+Proceso *EliminarEnEjecucion(Proceso *p) {
+  if (p == NULL) {
+    return NULL;
+  }
+  if (p -> Estado == 'E') {
+    Proceso *temp = p -> siguiente;
+    free(p);
+    return temp;
+  }
+  p -> siguiente = EliminarEnEjecucion(p -> siguiente);
+  return p;
+}
+
+// void RecuperarUltimo
+
+// Funcion para eliminar el proceso en ejecucion
+void ElimProcesoE(EstrucSched *s) {
+  Proceso *p, *previo;
+  for (int i = 0; i < 6; i++) {
+    EliminarEnEjecucion(s -> colas[i] -> primero);
+  }
+}
+
 // Funcion para leer un proceso de teclado y agregarlo a un planificador
 void LeerProceso(EstrucSched *s){
   long pid;
@@ -185,7 +191,6 @@ void LeerProceso(EstrucSched *s){
   scanf("%s\n", comando);
   Proceso *nuevo = nuevoProceso(pid, estado, tiempo, comando);
   InsertarProceso(s, nuevo, prioridad);
-
 }
 
 // Funcion para imprimir un planificador en un archivo

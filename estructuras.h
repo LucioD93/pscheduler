@@ -35,10 +35,11 @@ typedef struct {
   Firmas de funciones
 */
 Proceso *nuevoProceso(long, char, float, char*);
-void InsertarProceso(EstrucSched*, Proceso*, short);
 EstrucSched *Construye(char*);
 Proceso *BuscarProceso(EstrucSched*, long);
 Proceso *ProxProceso(EstrucSched*);
+void ElimProcesoE(EstrucSched*);
+void InsertarProceso(EstrucSched*, Proceso*, short);
 void TodosProcesosListos(EstrucSched*);
 void LeerProceso(EstrucSched*);
 void Guardar(EstrucSched*, char*);
