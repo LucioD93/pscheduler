@@ -144,18 +144,43 @@ Proceso *BuscarProceso(EstrucSched *s, long pidBuscado) {
 }
 
 // Funcion para eliminar un proceso en ejecucion de una colas
-Proceso *EliminarEnEjecucion(Proceso *p) {
-  if (!p) {
-    return NULL;
+// Proceso *EliminarEnEjecucion(Proceso *p) {
+//   if (!p) {
+//     return NULL;
+//   }
+//   if (p -> estado == E) {
+//     Proceso *temp = p -> siguiente;
+//     printf("Elimino: %ld", p->PID);
+//     free(p);
+//     return temp;
+//   }
+//   p -> siguiente = EliminarEnEjecucion(p -> siguiente);
+//   return p;
+// }
+void EliminarEnEjecucion(cola *c) {
+  if(ColaVacia(c)) {
+    return;
   }
-  if (p -> estado == E) {
-    Proceso *temp = p -> siguiente;
-    printf("Elimino: %ld", p->PID);
+  Proceso *p;
+  if (c -> primero -> estado == E) {
+    p = c -> primero;
+    c -> primero = p -> siguiente;
+    free (p);
+    return;
+  }
+  Proceso *previo;
+  previo = c -> primero;
+  p = previo -> siguiente;
+  while (p && p -> estado == L) {
+    previo = p;
+    p = p -> siguiente;
+  }
+  if (p) {
+    previo -> siguiente = p -> siguiente;
+    printf("Elimino:");
+    ImprimeProceso(p);
     free(p);
-    return temp;
   }
-  p -> siguiente = EliminarEnEjecucion(p -> siguiente);
-  return p;
 }
 
 // Funcion para recuperar el apuntador al ultimo elemento de una cola
@@ -198,7 +223,6 @@ void EliminarPorPID(cola *c, long pid) {
     ImprimeProceso(p);
     free(p);
   }
-
 }
 
 // Funcion para eliminar un proceso del planificador teniendo su pid y su prioridad
@@ -212,7 +236,7 @@ void ElimProceso(EstrucSched *s, long pid, short prioridad) {
 // Funcion para eliminar el proceso en ejecucion
 void ElimProcesoE(EstrucSched *s) {
   for (int i = 0; i < 6; i++) {
-    EliminarEnEjecucion(s -> colas[i] -> primero);
+    EliminarEnEjecucion(s -> colas[i]);
     RecuperarUltimo(s -> colas[i]);
     printf("Ultimo(%d): ", i);
     ImprimeProceso(s -> colas[i] -> ultimo);
