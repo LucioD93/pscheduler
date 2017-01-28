@@ -7,6 +7,8 @@ int main(int argc, char *argv[]) {
   }
   EstrucSched *s = Construye(argv[1]);
   int opcion;
+  long pid;
+  short prioridad;
   while(1) {
     printf("-----------------\n");
     printf("Elija una opcion\n");
@@ -14,6 +16,7 @@ int main(int argc, char *argv[]) {
     printf("2) Planificar proximo proceso\n");
     printf("3) Cambiar todos los procesos a estado listo\n");
     printf("4) Eliminar proceso en ejecucion\n");
+    printf("5) Eliminar por PID\n");
     printf("0) Guardar y salir\n");
     printf("Solo se toma el primer caracter: >");
     scanf("%d", &opcion);
@@ -31,6 +34,17 @@ int main(int argc, char *argv[]) {
         break;
         case 4:
           ElimProcesoE(s);
+        break;
+        case 5:
+          printf("Ingrese PID a eliminar: ");
+          scanf("%ld", &pid);
+          printf("Ingrese la prioridad: ");
+          scanf("%hd", &prioridad);
+          // pid = 1234;
+          // prioridad = 0;
+          ElimProceso(s, pid, prioridad);
+          // Proceso *p = nuevoProceso(1, L, 45.3, "Nuevo");
+          // InsertarProceso(s, p, 0);
         break;
         case 0:
         printf("Salgo\n");

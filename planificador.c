@@ -41,10 +41,6 @@ Proceso *nuevoProceso(long pid, Estado estado, float tiempo, char comando[32]) {
     printf("ERROR: tiempo debe ser no negativo");
     exit(1);
   }
-  // if (estado != 'L' && estado != 'E') {
-  //   printf("ERROR: estado solo puede ser L o E\n");
-  //   exit(1);
-  // }
   Proceso *p = (Proceso*) malloc(sizeof(Proceso));
   p -> PID = pid;
   p -> estado = estado;
@@ -149,7 +145,7 @@ Proceso *BuscarProceso(EstrucSched *s, long pidBuscado) {
 
 // Funcion para eliminar un proceso en ejecucion de una colas
 Proceso *EliminarEnEjecucion(Proceso *p) {
-  if (p == NULL) {
+  if (!p) {
     return NULL;
   }
   if (p -> estado == E) {
@@ -171,7 +167,46 @@ void RecuperarUltimo(cola *c) {
       p = p -> siguiente;
     }
     printf("Quedo: %ld\n", c -> ultimo -> PID);
+  } else {
+    printf("Quedo: nulo\n");
+    c -> ultimo = NULL;
   }
+}
+
+// Funcion para eliminar un proceso de una cola teniendo su pid
+void EliminarPorPID(cola *c, long pid) {
+  if (ColaVacia(c)) {
+    return;
+  }
+  Proceso *p;
+  if (c -> primero -> PID == pid) {
+    p = c -> primero;
+    c -> primero = p -> siguiente;
+    free (p);
+    return;
+  }
+  Proceso *previo;
+  previo = c -> primero;
+  p = previo -> siguiente;
+  while (p && p -> PID != pid) {
+    previo = p;
+    p = p -> siguiente;
+  }
+  if (p) {
+    previo -> siguiente = p -> siguiente;
+    printf("Elimino:");
+    ImprimeProceso(p);
+    free(p);
+  }
+
+}
+
+// Funcion para eliminar un proceso del planificador teniendo su pid y su prioridad
+void ElimProceso(EstrucSched *s, long pid, short prioridad) {
+  printf("PID a eliminar: |%ld|\n", pid);
+  // EliminarPorPID(s -> colas[prioridad] -> primero, pid);
+  EliminarPorPID(s -> colas[prioridad], pid);
+  RecuperarUltimo(s -> colas[prioridad]);
 }
 
 // Funcion para eliminar el proceso en ejecucion
@@ -203,7 +238,7 @@ void ElimProcesoE(EstrucSched *s) {
 //   printf("Introduce el tiempo de ejecucion del nuevo proceso: ");
 //   scanf("%f", &tiempo);
 //   printf("Introduce el nombre del nuevo proceso: ");
-//   scanf("%s\n", comando);
+//   scanf("%s", comando);
 //   Proceso *nuevo = nuevoProceso(pid, estado, tiempo, comando);
 //   InsertarProceso(s, nuevo, prioridad);
 // }

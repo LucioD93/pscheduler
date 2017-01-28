@@ -39,12 +39,12 @@ typedef struct {
 /*
   Firmas de funciones
 */
-Proceso *nuevoProceso(long, Estado, float, char*);
 EstrucSched *Construye(char*);
+Proceso *nuevoProceso(long, Estado, float, char*);
 Proceso *BuscarProceso(EstrucSched*, long);
 Proceso *ProxProceso(EstrucSched*);
-char EstadoAChar(Estado);
 Estado CharAEstado(char);
+char EstadoAChar(Estado);
 void CambiarEstado(EstrucSched*, Proceso*, Estado);
 void ElimProceso(EstrucSched*, long, short);
 void ElimProcesoE(EstrucSched*);
