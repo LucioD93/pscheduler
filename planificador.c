@@ -143,20 +143,7 @@ Proceso *BuscarProceso(EstrucSched *s, long pidBuscado) {
   return NULL;
 }
 
-// Funcion para eliminar un proceso en ejecucion de una colas
-// Proceso *EliminarEnEjecucion(Proceso *p) {
-//   if (!p) {
-//     return NULL;
-//   }
-//   if (p -> estado == E) {
-//     Proceso *temp = p -> siguiente;
-//     printf("Elimino: %ld", p->PID);
-//     free(p);
-//     return temp;
-//   }
-//   p -> siguiente = EliminarEnEjecucion(p -> siguiente);
-//   return p;
-// }
+// Funcion para eliminar un proceso en ejecucion de una cola
 void EliminarEnEjecucion(cola *c) {
   if(ColaVacia(c)) {
     return;
@@ -177,8 +164,6 @@ void EliminarEnEjecucion(cola *c) {
   }
   if (p) {
     previo -> siguiente = p -> siguiente;
-    printf("Elimino:");
-    ImprimeProceso(p);
     free(p);
   }
 }
@@ -191,10 +176,7 @@ void RecuperarUltimo(cola *c) {
       c -> ultimo = p;
       p = p -> siguiente;
     }
-    printf("Quedo: %ld\n", c -> ultimo -> PID);
   } else {
-    printf("Quedo: nulo\n");
-    c -> ultimo = NULL;
   }
 }
 
@@ -219,16 +201,12 @@ void EliminarPorPID(cola *c, long pid) {
   }
   if (p) {
     previo -> siguiente = p -> siguiente;
-    printf("Elimino:");
-    ImprimeProceso(p);
     free(p);
   }
 }
 
 // Funcion para eliminar un proceso del planificador teniendo su pid y su prioridad
 void ElimProceso(EstrucSched *s, long pid, short prioridad) {
-  printf("PID a eliminar: |%ld|\n", pid);
-  // EliminarPorPID(s -> colas[prioridad] -> primero, pid);
   EliminarPorPID(s -> colas[prioridad], pid);
   RecuperarUltimo(s -> colas[prioridad]);
 }
@@ -238,8 +216,6 @@ void ElimProcesoE(EstrucSched *s) {
   for (int i = 0; i < 6; i++) {
     EliminarEnEjecucion(s -> colas[i]);
     RecuperarUltimo(s -> colas[i]);
-    printf("Ultimo(%d): ", i);
-    ImprimeProceso(s -> colas[i] -> ultimo);
   }
 }
 
@@ -254,10 +230,8 @@ void LeerProceso(EstrucSched *s){
   char *c;
   printf("Introduce el pid del nuevo proceso: ");
   scanf("%ld", &pid);
-  printf("PID: |%ld|\n", pid);
   printf("Introduce el estado del nuevo proceso (Solo se acepta 'L' y 'E'): ");
   scanf(" %c", &estado);
-  printf("Estado: |%c|\n", estado);
   e = CharAEstado(estado);
   printf("Introduce la prioridad del nuevo proceso (del 0 al 5): ");
   scanf("%d", &prioridad);
@@ -267,8 +241,6 @@ void LeerProceso(EstrucSched *s){
   scanf("%s", comando);
   c = (char*) comando;
   Proceso *nuevo = nuevoProceso(pid, e, tiempo, c);
-  printf("Cree: ");
-  ImprimeProceso(nuevo);
   InsertarProceso(s, nuevo, prioridad);
 }
 
@@ -293,7 +265,7 @@ void Guardar(EstrucSched *s, char *archivo) {
       fprintf(f, "PID: %ld, Estado: %c, Tiempo: %f, Comando: %s\n", actual -> PID, EstadoAChar(actual -> estado), actual -> Tiempo, actual -> Comando);
       free(actual);
     }
-    fprintf(f, "-------------\n");
+    fprintf(f, "#################################################################\n");
     free(s -> colas[i]);
   }
   fclose(f);
@@ -305,7 +277,7 @@ void Imprime(EstrucSched *s) {
   for (int i = 0; i < 6; i++) {
     printf("Prioridad: %d\n", i);
     ImprimeCola(s -> colas[i]);
-    printf("---------------\n");
+    printf("#################################################################\n");
   }
 }
 

@@ -10,7 +10,7 @@ int main(int argc, char *argv[]) {
   long pid;
   short prioridad;
   while(1) {
-    printf("-----------------\n");
+    printf("#################################################################\n");
     printf("Elija una opcion\n");
     printf("1) Imprimir los procesos en el planificador\n");
     printf("2) Planificar proximo proceso\n");
@@ -27,8 +27,7 @@ int main(int argc, char *argv[]) {
         break;
         case 2:
         TodosProcesosListos(s);
-        printf("Planificar proximo proceso: ");
-        ImprimeProceso(ProxProceso(s));
+        ProxProceso(s);
         break;
         case 3:
           TodosProcesosListos(s);
