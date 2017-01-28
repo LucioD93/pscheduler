@@ -17,6 +17,7 @@ int main(int argc, char *argv[]) {
     printf("3) Cambiar todos los procesos a estado listo\n");
     printf("4) Eliminar proceso en ejecucion\n");
     printf("5) Eliminar por PID\n");
+    printf("6) Ingresar nuevo proceso al planificador\n");
     printf("0) Guardar y salir\n");
     printf("Solo se toma el primer caracter: >");
     scanf("%d", &opcion);
@@ -40,11 +41,10 @@ int main(int argc, char *argv[]) {
           scanf("%ld", &pid);
           printf("Ingrese la prioridad: ");
           scanf("%hd", &prioridad);
-          // pid = 1234;
-          // prioridad = 0;
           ElimProceso(s, pid, prioridad);
-          // Proceso *p = nuevoProceso(1, L, 45.3, "Nuevo");
-          // InsertarProceso(s, p, 0);
+        break;
+        case 6:
+          LeerProceso(s);
         break;
         case 0:
         printf("Salgo\n");

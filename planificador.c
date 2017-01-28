@@ -244,28 +244,33 @@ void ElimProcesoE(EstrucSched *s) {
 }
 
 // Funcion para leer un proceso de teclado y agregarlo a un planificador
-// void LeerProceso(EstrucSched *s){
-//   long pid;
-//   char estado = ' ';
-//   int prioridad;
-//   float tiempo;
-//   char *comando;
-//   printf("Introduce el pid del nuevo proceso: ");
-//   scanf("%ld", &pid);
-//   printf("PID: |%ld|\n", pid);
-//   printf("Introduce el estado del nuevo proceso (Solo se acepta 'L' y 'E'): ");
-//   printf("Deberia leer el estado|");
-//   scanf("%c", &estado);
-//   printf("|Debi leer el proceso |%c|", estado);
-//   printf("Introduce la prioridad del nuevo proceso (del 0 al 5): ");
-//   scanf("%d", &prioridad);
-//   printf("Introduce el tiempo de ejecucion del nuevo proceso: ");
-//   scanf("%f", &tiempo);
-//   printf("Introduce el nombre del nuevo proceso: ");
-//   scanf("%s", comando);
-//   Proceso *nuevo = nuevoProceso(pid, estado, tiempo, comando);
-//   InsertarProceso(s, nuevo, prioridad);
-// }
+void LeerProceso(EstrucSched *s){
+  long pid;
+  char estado = ' ';
+  Estado e;
+  int prioridad;
+  float tiempo;
+  char comando[32];
+  char *c;
+  printf("Introduce el pid del nuevo proceso: ");
+  scanf("%ld", &pid);
+  printf("PID: |%ld|\n", pid);
+  printf("Introduce el estado del nuevo proceso (Solo se acepta 'L' y 'E'): ");
+  scanf(" %c", &estado);
+  printf("Estado: |%c|\n", estado);
+  e = CharAEstado(estado);
+  printf("Introduce la prioridad del nuevo proceso (del 0 al 5): ");
+  scanf("%d", &prioridad);
+  printf("Introduce el tiempo de ejecucion del nuevo proceso: ");
+  scanf("%f", &tiempo);
+  printf("Introduce el nombre del nuevo proceso: ");
+  scanf("%s", comando);
+  c = (char*) comando;
+  Proceso *nuevo = nuevoProceso(pid, e, tiempo, c);
+  printf("Cree: ");
+  ImprimeProceso(nuevo);
+  InsertarProceso(s, nuevo, prioridad);
+}
 
 // Funcion para imprimir un planificador en un archivo
 void Guardar(EstrucSched *s, char *archivo) {
