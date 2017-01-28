@@ -6,11 +6,16 @@
 #include <string.h>
 
 /*
+  Enumerado para los estados de los procesos
+*/
+typedef enum {L, E} Estado;
+
+/*
   Estructura para procesos
 */
 typedef struct proceso {
   long PID;
-  char Estado;
+  Estado estado;
   float Tiempo;
   char Comando[32];
   struct proceso *siguiente;
@@ -34,10 +39,13 @@ typedef struct {
 /*
   Firmas de funciones
 */
-Proceso *nuevoProceso(long, char, float, char*);
+Proceso *nuevoProceso(long, Estado, float, char*);
 EstrucSched *Construye(char*);
 Proceso *BuscarProceso(EstrucSched*, long);
 Proceso *ProxProceso(EstrucSched*);
+char EstadoAChar(Estado);
+Estado CharAEstado(char);
+void CambiarEstado(EstrucSched*, Proceso*, Estado);
 void ElimProceso(EstrucSched*, long, short);
 void ElimProcesoE(EstrucSched*);
 void InsertarProceso(EstrucSched*, Proceso*, short);

@@ -32,7 +32,7 @@ void InsertarProceso(EstrucSched *s, Proceso *p, short prioridad) {
 }
 
 // Funcion para generar un nuevo proceso
-Proceso *nuevoProceso(long pid, char estado, float tiempo, char comando[32]) {
+Proceso *nuevoProceso(long pid, Estado estado, float tiempo, char comando[32]) {
   if (pid <= 0) {
     printf("ERROR: PID debe ser positivo\n");
     exit(1);
@@ -41,13 +41,13 @@ Proceso *nuevoProceso(long pid, char estado, float tiempo, char comando[32]) {
     printf("ERROR: tiempo debe ser no negativo");
     exit(1);
   }
-  if (estado != 'L' && estado != 'E') {
-    printf("ERROR: estado solo puede ser L o E\n");
-    exit(1);
-  }
+  // if (estado != 'L' && estado != 'E') {
+  //   printf("ERROR: estado solo puede ser L o E\n");
+  //   exit(1);
+  // }
   Proceso *p = (Proceso*) malloc(sizeof(Proceso));
   p -> PID = pid;
-  p -> Estado = estado;
+  p -> estado = estado;
   p -> Tiempo = tiempo;
   strcpy(p -> Comando, comando);
   p -> siguiente = NULL;
@@ -55,8 +55,8 @@ Proceso *nuevoProceso(long pid, char estado, float tiempo, char comando[32]) {
 }
 
 // Funcion para cambiar el estado de un proceso
-void CambiarEstado(EstrucSched *s, Proceso *p, char newestado) {
-  p -> Estado = newestado;
+void CambiarEstado(EstrucSched *s, Proceso *p, Estado newestado) {
+  p -> estado = newestado;
 }
 
 // Funcion para poner todos los procesos en estado listo
@@ -65,7 +65,7 @@ void TodosProcesosListos( EstrucSched *s) {
   for (int i = 0; i < 6; i++) {
     actual = s -> colas[i] -> primero;
     while (actual) {
-      CambiarEstado(s, actual, 'L');
+      CambiarEstado(s, actual, L);
       actual = actual -> siguiente;
     }
   }
@@ -82,7 +82,7 @@ Proceso *ProxProceso(EstrucSched *s) {
   }
   // Si llego aqui encontro una cola no vacia
   Proceso *p = s -> colas[i] -> primero;
-  CambiarEstado(s, p, 'E');
+  CambiarEstado(s, p, E);
   if (p -> siguiente) {
     s -> colas[i] -> primero = p -> siguiente;
     p -> siguiente = NULL;
@@ -109,6 +109,7 @@ EstrucSched *Construye(char *filename) {
   }
   long pid;
   char estado;
+  Estado e;
   int prioridad;
   float tiempo;
   char comando[32];
@@ -123,7 +124,8 @@ EstrucSched *Construye(char *filename) {
     fscanf(f, "%d", &prioridad);
     fscanf(f, "%f", &tiempo);
     fscanf(f, "%s", comando);
-    p = nuevoProceso(pid, estado, tiempo, comando);
+    e = CharAEstado(estado);
+    p = nuevoProceso(pid, e, tiempo, comando);
     InsertarProceso(planificador, p, prioridad);
   }
   fclose(f);
@@ -150,7 +152,7 @@ Proceso *EliminarEnEjecucion(Proceso *p) {
   if (p == NULL) {
     return NULL;
   }
-  if (p -> Estado == 'E') {
+  if (p -> estado == E) {
     Proceso *temp = p -> siguiente;
     printf("Elimino: %ld", p->PID);
     free(p);
@@ -183,28 +185,28 @@ void ElimProcesoE(EstrucSched *s) {
 }
 
 // Funcion para leer un proceso de teclado y agregarlo a un planificador
-void LeerProceso(EstrucSched *s){
-  long pid;
-  char estado = ' ';
-  int prioridad;
-  float tiempo;
-  char *comando;
-  printf("Introduce el pid del nuevo proceso: ");
-  scanf("%ld", &pid);
-  printf("PID: |%ld|\n", pid);
-  printf("Introduce el estado del nuevo proceso (Solo se acepta 'L' y 'E'): ");
-  printf("Deberia leer el estado|");
-  scanf("%c", &estado);
-  printf("|Debi leer el proceso |%c|", estado);
-  printf("Introduce la prioridad del nuevo proceso (del 0 al 5): ");
-  scanf("%d", &prioridad);
-  printf("Introduce el tiempo de ejecucion del nuevo proceso: ");
-  scanf("%f", &tiempo);
-  printf("Introduce el nombre del nuevo proceso: ");
-  scanf("%s\n", comando);
-  Proceso *nuevo = nuevoProceso(pid, estado, tiempo, comando);
-  InsertarProceso(s, nuevo, prioridad);
-}
+// void LeerProceso(EstrucSched *s){
+//   long pid;
+//   char estado = ' ';
+//   int prioridad;
+//   float tiempo;
+//   char *comando;
+//   printf("Introduce el pid del nuevo proceso: ");
+//   scanf("%ld", &pid);
+//   printf("PID: |%ld|\n", pid);
+//   printf("Introduce el estado del nuevo proceso (Solo se acepta 'L' y 'E'): ");
+//   printf("Deberia leer el estado|");
+//   scanf("%c", &estado);
+//   printf("|Debi leer el proceso |%c|", estado);
+//   printf("Introduce la prioridad del nuevo proceso (del 0 al 5): ");
+//   scanf("%d", &prioridad);
+//   printf("Introduce el tiempo de ejecucion del nuevo proceso: ");
+//   scanf("%f", &tiempo);
+//   printf("Introduce el nombre del nuevo proceso: ");
+//   scanf("%s\n", comando);
+//   Proceso *nuevo = nuevoProceso(pid, estado, tiempo, comando);
+//   InsertarProceso(s, nuevo, prioridad);
+// }
 
 // Funcion para imprimir un planificador en un archivo
 void Guardar(EstrucSched *s, char *archivo) {
@@ -219,12 +221,12 @@ void Guardar(EstrucSched *s, char *archivo) {
     if (actual) {
       Proceso *siguiente = actual -> siguiente;
       while (siguiente) {
-        fprintf(f, "pid:%ld, estado:%c, tiempo:%f, comando:%s\n", actual -> PID, actual -> Estado, actual -> Tiempo, actual -> Comando);
+        fprintf(f, "PID: %ld, Estado: %c, Tiempo: %f, Comando: %s\n", actual -> PID, EstadoAChar(actual -> estado), actual -> Tiempo, actual -> Comando);
         free(actual);
         actual = siguiente;
         siguiente = siguiente -> siguiente;
       }
-      fprintf(f, "pid:%ld, estado:%c, tiempo:%f, comando:%s\n", actual -> PID, actual -> Estado, actual -> Tiempo, actual -> Comando);
+      fprintf(f, "PID: %ld, Estado: %c, Tiempo: %f, Comando: %s\n", actual -> PID, EstadoAChar(actual -> estado), actual -> Tiempo, actual -> Comando);
       free(actual);
     }
     fprintf(f, "-------------\n");
@@ -252,11 +254,38 @@ void ImprimeCola(cola *c) {
   }
 }
 
+// Funcion para pasar de char a Estado
+Estado CharAEstado(char e) {
+  switch (e) {
+    case 'E':
+      return E;
+    break;
+    default:
+      return L;
+    break;
+  }
+}
+
+// Funcion para pasar de Estado a char
+char EstadoAChar(Estado e) {
+  switch (e) {
+    case L:
+      return 'L';
+    break;
+    case E:
+      return 'E';
+    break;
+    default:
+      return ' ';
+    break;
+  }
+}
+
 // Funcion para imprimir un proceso
 void ImprimeProceso(Proceso *p) {
   if (!p) {
-    printf("Proceso nulo");
+    printf("Proceso nulo\n");
     return;
   }
-  printf("PID: %ld, Estado: %c, Tiempo: %f, Comando: %s\n", p -> PID, p -> Estado, p -> Tiempo, p -> Comando);
+  printf("PID: %ld, Estado: %c, Tiempo: %f, Comando: %s\n", p -> PID, EstadoAChar(p -> estado), p -> Tiempo, p -> Comando);
 }
