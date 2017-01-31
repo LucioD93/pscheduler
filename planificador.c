@@ -42,6 +42,10 @@ Proceso *nuevoProceso(long pid, Estado estado, float tiempo, char comando[32]) {
     exit(1);
   }
   Proceso *p = (Proceso*) malloc(sizeof(Proceso));
+  if (!p) {
+    printf("ERROR: No se ha podido reservar espacio para proceso\n");
+    exit(1);
+  }
   p -> PID = pid;
   p -> estado = estado;
   p -> Tiempo = tiempo;
@@ -93,8 +97,15 @@ Proceso *ProxProceso(EstrucSched *s) {
 EstrucSched *Construye(char *filename) {
   // Se inicializa el planificador de procesos
   EstrucSched *planificador = (EstrucSched*) malloc(sizeof(EstrucSched));
+  if (!planificador) {
+    printf("ERROR: No se ha podido reservar espacio para el planificador\n");
+    exit(1);
+  }
   for (int i = 0; i < 6; i++) {
     planificador -> colas[i] = (cola*) malloc(sizeof(cola));
+    if(!planificador -> colas[i]) {
+      printf("ERROR: No se ha podido reservar espacio para cola[%d]\n", i);
+    }
     planificador -> colas[i] -> primero = NULL;
     planificador -> colas[i] -> ultimo = NULL;
   }
